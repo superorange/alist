@@ -48,7 +48,11 @@ func (d *PikPak) Init(ctx context.Context) (err error) {
 			},
 		}
 	}
-
+	if d.HttpProxy != "" {
+		d.Common.client = d.Common.client.SetProxy(d.HttpProxy)
+	} else {
+		d.Common.client = d.Common.client.RemoveProxy()
+	}
 	if d.Platform == "android" {
 		d.ClientID = AndroidClientID
 		d.ClientSecret = AndroidClientSecret

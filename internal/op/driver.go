@@ -145,6 +145,12 @@ func getMainItems(config driver.Config) []driver.Item {
 		Default:  "false",
 		Required: true,
 	})
+	items = append(items, driver.Item{
+		Name:     "http_proxy",
+		Type:     conf.TypeString,
+		Default:  "",
+		Required: false,
+	})
 	return items
 }
 func getAdditionalItems(t reflect.Type, defaultRoot string) []driver.Item {

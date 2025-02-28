@@ -19,6 +19,7 @@ type Storage struct {
 	EnableSign      bool      `json:"enable_sign"`
 	Sort
 	Proxy
+	HttpProxy string `json:"http_proxy"`
 }
 
 type Sort struct {
