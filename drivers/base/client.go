@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alist-org/alist/v3/internal/conf"
+	"github.com/alist-org/alist/v3/internal/model"
 	"github.com/alist-org/alist/v3/internal/net"
 	"github.com/go-resty/resty/v2"
 )
@@ -38,4 +39,10 @@ func NewRestyClient() *resty.Client {
 		SetTimeout(DefaultTimeout).
 		SetTLSClientConfig(&tls.Config{InsecureSkipVerify: conf.Conf.TlsInsecureSkipVerify})
 	return client
+}
+func NewRestyClientWithHttpProxy(proxy string) *resty.Client {
+	if proxy == "" {
+		return RestyClient
+	}
+	return RestyClient.SetProxy(proxy)
 }

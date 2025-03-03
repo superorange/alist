@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+	"strings"
 	"github.com/alist-org/alist/v3/drivers/base"
 	"github.com/alist-org/alist/v3/internal/driver"
 	"github.com/alist-org/alist/v3/internal/model"
@@ -12,9 +15,6 @@ import (
 	hash_extend "github.com/alist-org/alist/v3/pkg/utils/hash"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 type PikPak struct {
@@ -34,7 +34,6 @@ func (d *PikPak) GetAddition() driver.Additional {
 }
 
 func (d *PikPak) Init(ctx context.Context) (err error) {
-
 	if d.Common == nil {
 		d.Common = &Common{
 			client:       base.NewRestyClient(),
@@ -47,11 +46,6 @@ func (d *PikPak) Init(ctx context.Context) (err error) {
 				op.MustSaveDriverStorage(d)
 			},
 		}
-	}
-	if d.HttpProxy != "" {
-		d.Common.client = d.Common.client.SetProxy(d.HttpProxy)
-	} else {
-		d.Common.client = d.Common.client.RemoveProxy()
 	}
 	if d.Platform == "android" {
 		d.ClientID = AndroidClientID
