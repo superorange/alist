@@ -89,7 +89,7 @@ func (d *OnedriveAPP) _accessToken() error {
 }
 
 func (d *OnedriveAPP) Request(url string, method string, callback base.ReqCallback, resp interface{}) ([]byte, error) {
-	req := base.RestyClient.R()
+	req := base.NewRestyClientWithHttpProxy(d.Storage.HttpProxy).R()
 	req.SetHeader("Authorization", "Bearer "+d.AccessToken)
 	if callback != nil {
 		callback(req)

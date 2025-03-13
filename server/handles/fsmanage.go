@@ -133,8 +133,8 @@ func FsCopy(c *gin.Context) {
 	if !req.Overwrite {
 		for _, name := range req.Names {
 			if res, _ := fs.Get(c, stdpath.Join(dstDir, name), &fs.GetArgs{NoLog: true}); res != nil {
-				common.ErrorStrResp(c, fmt.Sprintf("file [%s] exists", name), 403)
-				return
+				//common.ErrorStrResp(c, fmt.Sprintf("file [%s] exists", name), 403)
+				//return
 			}
 		}
 	}

@@ -170,7 +170,7 @@ func (d *PikPak) refreshToken(refreshToken string) error {
 }
 
 func (d *PikPak) request(url string, method string, callback base.ReqCallback, resp interface{}) ([]byte, error) {
-	req := base.RestyClient.R()
+	req := base.NewRestyClientWithHttpProxy(d.Storage.HttpProxy).R()
 	req.SetHeaders(map[string]string{
 		//"Authorization":   "Bearer " + d.AccessToken,
 		"User-Agent":      d.GetUserAgent(),

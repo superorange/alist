@@ -39,3 +39,9 @@ func NewRestyClient() *resty.Client {
 		SetTLSClientConfig(&tls.Config{InsecureSkipVerify: conf.Conf.TlsInsecureSkipVerify})
 	return client
 }
+func NewRestyClientWithHttpProxy(proxy string) *resty.Client {
+	if proxy == "" {
+		return RestyClient
+	}
+	return RestyClient.SetProxy(proxy)
+}

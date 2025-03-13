@@ -6,6 +6,7 @@ import (
 	"github.com/alist-org/alist/v3/internal/errs"
 	"net/http"
 	stdpath "path"
+	"strings"
 	"time"
 
 	"github.com/alist-org/alist/v3/internal/conf"
@@ -130,7 +131,22 @@ func copyBetween2Storages(t *CopyTask, srcStorage, dstStorage driver.Driver, src
 		if err != nil {
 			return errors.WithMessagef(err, "failed list src [%s] objs", srcObjPath)
 		}
+		sp := strings.Split(srcObjPath, "/")
+		lastSp := sp[len(sp)-1]
+		//组合dstDirPath
+		newDstDirPath := stdpath.Join(dstDirPath, lastSp)
+		dstObjs, err := op.List(t.Ctx(), dstStorage, newDstDirPath, model.ListArgs{})
+		if err != nil {
+			dstObjs = []model.Obj{}
+		}
+	loopa:
 		for _, obj := range objs {
+			for _, dstObj := range dstObjs {
+				if obj.GetName() == dstObj.GetName() {
+					continue loopa
+				}
+			}
+
 			if utils.IsCanceled(t.Ctx()) {
 				return nil
 			}
