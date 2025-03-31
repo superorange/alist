@@ -63,6 +63,7 @@ jobs:
         with:
           files: build/compress/*
           prerelease: false
+          body: "no body"
 
   release_desktop:
     needs: release
