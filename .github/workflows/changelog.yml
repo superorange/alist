@@ -13,12 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Delete beta tag
         run: git tag -d beta
         continue-on-error: true
 
-      - run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
+      - run: npx changelogithub --latest-only # or changelogithub@0.12 if ensure the stable result
         env:
           GITHUB_TOKEN: ${{secrets.MY_TOKEN}}
