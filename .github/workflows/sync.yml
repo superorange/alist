@@ -1,12 +1,9 @@
-name: Sync Upstream and Build
+name: Sync Upstream
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # 每周同步一次
+    - cron: '0 0 * * 0'  # 每周日 00:00（UTC）执行
   workflow_dispatch:  # 允许手动触发
-  push:
-    branches:
-      - main  # 当 main 分支有变化时触发
 
 jobs:
   sync-upstream:
@@ -29,27 +26,8 @@ jobs:
           git merge upstream/main --no-edit
           git push origin main
 
-  build-alist:
-    needs: sync-upstream
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检查出最新代码
-        uses: actions/checkout@v4
-
-      - name: 安装 Go 和依赖
+      - name: 触发 Build Workflow
         run: |
-          sudo apt update
-          sudo apt install -y curl unzip
-          curl -fsSL https://go.dev/dl/go1.22.0.linux-amd64.tar.gz | sudo tar -xz -C /usr/local
-          echo 'export PATH=$PATH:/usr/local/go/bin' >> $HOME/.bashrc
-          source $HOME/.bashrc
-
-      - name: 编译 AList
-        run: |
-          go build -o alist
-
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: alist-binary
-          path: ./alist
+          gh workflow run build.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
