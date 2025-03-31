@@ -1,0 +1,55 @@
+name: Sync Upstream and Build
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # 每周同步一次
+  workflow_dispatch:  # 允许手动触发
+  push:
+    branches:
+      - main  # 当 main 分支有变化时触发
+
+jobs:
+  sync-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检查出你的 Fork 仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史记录
+
+      - name: 配置 Git 用户信息
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: 添加 AList 上游仓库
+        run: |
+          git remote add upstream https://github.com/alist-org/alist.git || true
+          git fetch upstream
+          git merge upstream/main --no-edit
+          git push origin main
+
+  build-alist:
+    needs: sync-upstream
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检查出最新代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Go 和依赖
+        run: |
+          sudo apt update
+          sudo apt install -y curl unzip
+          curl -fsSL https://go.dev/dl/go1.22.0.linux-amd64.tar.gz | sudo tar -xz -C /usr/local
+          echo 'export PATH=$PATH:/usr/local/go/bin' >> $HOME/.bashrc
+          source $HOME/.bashrc
+
+      - name: 编译 AList
+        run: |
+          go build -o alist
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: alist-binary
+          path: ./alist
